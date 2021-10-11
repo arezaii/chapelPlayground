@@ -24,9 +24,9 @@ module M {
     }
 
     var debug = flagArg.valueAsBool();
-    // we are assured a value here or else the parser would have thrown
-    var foo = simpleArg.value();
-    var bar:string;
+    var bar:string, foo:string;
+    if simpleArg.hasValue() then foo = simpleArg.value();
+
     if optionArg.hasValue() then bar = optionArg.value();
   }
 
