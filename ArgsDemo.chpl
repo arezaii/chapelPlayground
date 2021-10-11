@@ -17,13 +17,13 @@ module M {
                                   opts=["--flagOn"]);
 
     // add a positional argument that expects 1 value
-    var posArg = parser.addPositional(name="positionalArg");
+    var posArg = parser.addArgument(name="positionalArg");
 
     // add a subcommand that has its own parser (defined later)
     var subCmd1 = parser.addSubCommand(cmd="subCmd1");
 
     // setup the passthrough indicator
-    var runPassThrough = parser.setPassThrough("++");
+    var runPassThrough = parser.setPassThrough("--");
 
     // parse the args
     parser.parseArgs(args);
@@ -51,22 +51,16 @@ module M {
     var parser = new argumentParser();
 
     // add a positional argument to the subcommand that expects 0 or 1 values
-    var subPosArg = parser.addPositional(name="subItem",
+    var subPosArg = parser.addArgument(name="subItem",
                                           numArgs=0..1,
                                           defaultValue=none);
-
 
     // parse the subcommand args
     parser.parseArgs(args);
 
-
     // output the args
     writeln("\targs parsed in subcommand:");
-
     for item in subPosArg.values() do writeln("\t" + item);
-
-
-
 
   }
 }
