@@ -6,7 +6,9 @@ module M {
     var simpleArg = parser.addArgument(name="positional", numArgs=0..1);
     var optionArg = parser.addOption(name="optional");
     var flagArg = parser.addFlag(name="debug", defaultValue=false);
-    var helpFlag = parser.addFlag(name="help", defaultValue=false);
+
+    // add help flag handling
+    var helpFlag = parser.addFlag(name="help", opts=["-h","--help"], defaultValue=false);
 
     try!{
       parser.parseArgs(args);
@@ -15,7 +17,7 @@ module M {
       printHelp();
       exit(1);
     }
-
+    // check for help flag
     if helpFlag.valueAsBool() {
       printHelp();
       exit(0);
