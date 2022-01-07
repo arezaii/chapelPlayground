@@ -22,20 +22,28 @@ module pi {
     for k in dom.these() {
       sum += ((-1.0) ** k) / ((2.0 * k) + 1.0);
     }
+    // with(ref sum) can force race if for -> forall
+    // with(+ reduce sum) virtually equal to par ver
     return 4.0 * sum;
   }
 
   proc leibnizPar() : real {
-    var sum = + reduce forall k in dom.these() do
-                         ((-1.0) ** k) / ((2.0 * k) + 1.0);
+    // var sum = + reduce [k in dom] ((-1.0) ** k) / ((2.0 * k) + 1.0);
+    var sum = + reduce (((-1.0) ** dom) / ((2.0 * dom) + 1.0)); // pro-mode
     // TODO: Why par version produce slightly different value than serial?
+    // explanation is that floating point operations are not necessarily
+    // commutative and associative
+
+    // get the type of the sum var
+    // compilerWarning(sum.type:string);
+
     return 4.0 * sum;
   }
 
   proc monteCarlo() : real {
     var innerPts = 0;
 
-    for i in dom.these() {
+    for i in dom {
       if (Xs[i] ** 2 + Ys[i] ** 2 <= 1) {
         innerPts += 1;
       }
@@ -46,7 +54,10 @@ module pi {
 
 
   proc monteCarloPar() : real {
-    var res = + reduce forall i in dom.these() do if Xs[i] ** 2 + Ys[i] ** 2 <=1 then 1;
+    var res = + reduce [i in dom] if Xs[i] ** 2 + Ys[i] ** 2 <=1 then 1;
+    // var res = + reduce if Xs ** 2 + Ys ** 2 <=1 then 1 else 0;
+    // doesn't work because of conditional statement used with promotion
+
 
     return  (4.0 * res) / dom.size;
   }
@@ -68,6 +79,7 @@ module pi {
 
     writeln("PARALLEL APPROACH:");
     timer.clear();
+    // writeln(leibnizPar());
     writef("Leibniz Pi estimate: %{##.#################} in %{###.##########} seconds.\n",
             leibnizPar(), timer.elapsed());
     timer.clear();
